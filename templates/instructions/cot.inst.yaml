@@ -11,22 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import yaml
-from functools import lru_cache
-from yaml.error import YAMLError
-from typing import Dict, Any
 
-_cache: Dict[str, Any] = {}
+# Reference: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" by Wei et al.
+# https://arxiv.org/abs/2201.11903
 
-from .exceptions import TemplateNotFoundError, TemplateParsingError
-
-
-@lru_cache(maxsize=None)
-def load_template(path: str) -> dict:
-    try:
-        with open(path, "r") as f:
-            return yaml.safe_load(f)
-    except FileNotFoundError:
-        raise TemplateNotFoundError(f"Template file not found at: {path}")
-    except YAMLError as e:
-        raise TemplateParsingError(f"Error parsing YAML file at {path}: {e}")
+instructions: |
+  When you are asked a question, please think step by step to arrive at the correct answer. Your response should clearly outline your reasoning process before presenting the final solution.
