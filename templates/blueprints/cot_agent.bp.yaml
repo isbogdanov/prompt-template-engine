@@ -1,0 +1,16 @@
+# This is a blueprint for a Chain of Thought (CoT) agent. To create your own 
+# agent, copy this file to your project's definitions folder, and fill in the content.
+
+# 1. Declare the agent type. The engine uses this to apply the correct logic.
+agent_type: "CoT"
+
+# 2. Define the core persona of your agent.
+system_message: |
+  <Your agent's core instructions, role, and goals go here.>
+
+# 3. List the critical, high-level rules the agent must follow.
+rules:
+  - "<Rule 1: e.g., You must think step-by-step.>"
+  - "<Rule 2: e.g., Your final answer should be a single value.>"
+  - "<...>"
+

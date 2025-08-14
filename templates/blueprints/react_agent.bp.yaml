@@ -1,0 +1,47 @@
+# This is a blueprint for a ReAct agent. To create your own agent, copy this
+# file to your project's definitions folder, and fill in the content.
+
+# 1. Declare the agent type. The engine uses this to apply the correct logic.
+agent_type: "ReAct"
+
+# 2. Define the core persona of your agent.
+system_message: |
+  <Your agent's core instructions, role, and goals go here.>
+
+# 3. List the critical, high-level rules the agent must follow.
+rules:
+  - "<Rule 1: e.g., Your final output must be a single 'Answer:'.>"
+  - "<Rule 2: e.g., You must use the provided tools.>"
+  - "<...>"
+
+# 4. Define the tools available to the agent.
+# The 'name', 'description', and 'example_calling' keys are required.
+tools:
+  - name: "<tool_name_1>"
+    description: "<A clear description of what this tool does.>"
+    example_calling: "<An example of how to call this tool, e.g., tool_name: input>"
+  - name: "<tool_name_2>"
+    description: "<Description for the second tool.>"
+    example_calling: "<tool_name_2: different_input>"
+    is_critical: true # Optional flag
+
+# 5. Provide few-shot examples of the agent's reasoning process.
+# Each example is a list of steps.
+examples:
+  - name: "<Name for the first example, e.g., 'Successful Investigation'>"
+    steps:
+      - type: "thought"
+        content: "<The agent's reasoning about what to do next.>"
+      - type: "tool_call"
+        name: "<tool_name_1>"
+        input: "<The input provided to the tool.>"
+      - type: "observation"
+        content: "<The simulated output from the tool.>"
+      # ... continue with more thought, tool_call, observation steps ...
+      - type: "thought"
+        content: "<The final thought process before providing the answer.>"
+      - type: "answer"
+        content: "<The final answer that concludes this example.>"
+  # - name: "<Name for a second example>"
+  #   steps:
+  #     - ...
