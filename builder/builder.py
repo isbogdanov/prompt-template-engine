@@ -13,9 +13,10 @@
 # limitations under the License.
 import re
 from typing import Dict, Any, Set
+import os
 
 from .loader import load_template
-from .exceptions import MissingPlaceholderError
+from .exceptions import MissingPlaceholderError, TemplateNotFoundError
 
 
 class PromptBuilder:
@@ -23,7 +24,15 @@ class PromptBuilder:
         self.agent_template: Dict[str, Any] = load_template(agent_definition_path)
         self.agent_type: str = self.agent_template.get("agent_type", "default")
 
-        instruction_path = f"templates/instructions/{self.agent_type.lower()}.inst.yaml"
+        # The templates are now located inside the 'builder' package,
+        # so we construct the path relative to this file.
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        instruction_path = os.path.join(
+            current_dir,
+            "templates",
+            "instructions",
+            f"{self.agent_type.lower()}.inst.yaml",
+        )
         self.instruction_template: Dict[str, Any] = load_template(instruction_path)
 
     def build(self, **runtime_kwargs) -> str:

@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Reference: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" by Wei et al.
-# https://arxiv.org/abs/2201.11903
+# Reference: "Language Models are Few-Shot Learners" by Brown et al.
+# https://arxiv.org/abs/2005.14165
 
+name: "Few-Shot"
 instructions: |
-  When you are asked a question, please think step by step to arrive at the correct answer. Your response should clearly outline your reasoning process before presenting the final solution.
+  You are an advanced AI assistant. Your task is to follow the provided examples and generate a response in the exact same format.

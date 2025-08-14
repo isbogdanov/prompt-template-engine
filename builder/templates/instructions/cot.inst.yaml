@@ -11,8 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from .builder import PromptBuilder
-from .loader import load_template
-from .exceptions import MissingPlaceholderError
 
-__all__ = ["PromptBuilder"]
+# Reference: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" by Wei et al.
+# https://arxiv.org/abs/2201.11903
+
+name: "Chain-of-Thought"
+instructions: |
+  When you are asked a question, please think step by step to arrive at the correct answer. Your response should clearly outline your reasoning process before presenting the final solution.

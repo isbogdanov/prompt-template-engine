@@ -1,0 +1,47 @@
+# Copyright 2024 Igor Bogdanov
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This is a blueprint for a ReAct agent. To create your own agent, copy this
+# file to your project's definitions folder, and fill in the content.
+
+# 1. Declare the agent type. The engine uses this to apply the correct logic.
+agent_type: react
+
+# 2. Define the core persona of your agent.
+system_message: "You are a helpful assistant."
+
+# 3. List the critical, high-level rules the agent must follow.
+rules:
+  - "You must use the provided tools when necessary."
+  - "Your final answer must be clear and concise."
+
+# 4. Define the tools available to the agent.
+tools:
+  - name: "search"
+    description: "Searches for information on the web."
+    example_calling: "search: latest news on AI"
+
+# 5. Provide examples of how the agent should behave.
+examples:
+  - name: "Successful Search"
+    steps:
+      - type: "thought"
+        content: "I need to find the capital of France. I should use the search tool."
+      - type: "tool_call"
+        name: "search"
+        input: "capital of France"
+      - type: "observation"
+        content: "Paris is the capital of France."
+      - type: "answer"
+        content: "The capital of France is Paris."

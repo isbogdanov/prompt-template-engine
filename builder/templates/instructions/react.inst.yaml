@@ -15,6 +15,7 @@
 # Reference: "ReAct: Synergizing Reasoning and Acting in Language Models" by Yao et al.
 # https://arxiv.org/abs/2210.03629
 
+name: "ReAct"
 instructions: |
   You operate in a loop of Thought, Tool, PAUSE, Observation.
   1. Use Thought to describe your thoughts about the question you have been asked.
