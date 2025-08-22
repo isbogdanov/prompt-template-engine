@@ -1,0 +1,79 @@
+# Copyright 2025 Igor Bogdanov
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: "improve_based_on_critique"
+  description: "Refine and improve your previous thought or answer based on the critical feedback you just generated. This tool MUST only be called immediately after 'critique_the_answer'."
+  example_calling: "improve_based_on_critique: The critique highlighted a flaw in my reasoning. I will revise my plan to account for the new perspective."
+  examples:
+    - name: "Revising a Plan After a Valid Critique"
+      description: "An example of using the full self-correction flow to revise and improve an initial plan."
+      steps:
+        - type: "custom"
+          content: "Situation: I need to develop a strategy for a complex, multi-faceted problem."
+        - type: "thought"
+          content: "My initial idea is to apply a standard, straightforward solution."
+        - type: "tool_call"
+          name: "raise_a_question"
+          input: "Is this standard solution truly adequate for the complexity of this problem?"
+        - type: "observation"
+          content: "You have chosen to ask yourself: Is this standard solution truly adequate for the complexity of this problem? What can you answer yourself?"
+        - type: "thought"
+          content: "Good question. I should examine my own proposed solution for weaknesses."
+        - type: "tool_call"
+          name: "critique_the_answer"
+          input: "Critique: The standard solution is a good starting point, but it fails to account for several key nuances of this specific problem. It might lead to unintended negative consequences."
+        - type: "observation"
+          content: "You have provided a critique. What is your next thought?"
+        - type: "thought"
+          content: "The critique is correct. My initial plan is insufficient. I need to refine it based on this feedback."
+        - type: "tool_call"
+          name: "improve_based_on_critique"
+          input: "Improvement: I will adapt the standard solution by adding specific components that address the unique facets of this problem, thereby mitigating the potential negative consequences."
+        - type: "observation"
+          content: "You have improved your plan based on the critique. What is your next thought?"
+        - type: "thought"
+          content: "This revised plan is much more robust and tailored to the situation."
+        - type: "answer"
+          content: "My improved plan is to use an adapted version of the standard solution, customized to address the specific complexities of the problem."
+
+    - name: "Affirming a Plan After a Critique"
+      description: "An example where a critique affirms the original plan, and the improvement tool is used to solidify confidence."
+      steps:
+        - type: "custom"
+          content: "Situation: I have a proposed course of action that seems correct, but I want to ensure it's robust."
+        - type: "thought"
+          content: "My plan is to proceed with Action B. It seems like the most logical step."
+        - type: "tool_call"
+          name: "raise_a_question"
+          input: "Are there any hidden risks or alternative actions I might be overlooking with Action B?"
+        - type: "observation"
+          content: "You have chosen to ask yourself: Are there any hidden risks or alternative actions I might be overlooking with Action B? What can you answer yourself?"
+        - type: "thought"
+          content: "Let me critically evaluate my own plan."
+        - type: "tool_call"
+          name: "critique_the_answer"
+          input: "Critique: I've considered alternatives and risks. Alternative C is slower, and Alternative D is riskier. The potential risks of Action B are manageable and have been accounted for. The plan appears sound."
+        - type: "observation"
+          content: "You have provided a critique. What is your next thought?"
+        - type: "thought"
+          content: "The critique confirms that my initial plan is the best course of action. I should formalize this."
+        - type: "tool_call"
+          name: "improve_based_on_critique"
+          input: "Improvement: The self-critique confirmed that Action B is the optimal path. The plan remains unchanged, but I now have higher confidence in it after reviewing and dismissing potential alternatives and risks."
+        - type: "observation"
+          content: "You have improved your plan based on the critique. What is your next thought?"
+        - type: "thought"
+          content: "I am now confident in proceeding with the original plan."
+        - type: "answer"
+          content: "After a thorough review and critique, my final plan is to proceed with Action B."

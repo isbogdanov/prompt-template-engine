@@ -1,4 +1,4 @@
-# Copyright 2024 Igor Bogdanov
+# Copyright 2025 Igor Bogdanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,3 +18,4 @@
 name: "Chain-of-Thought"
 instructions: |
   When you are asked a question, please think step by step to arrive at the correct answer. Your response should clearly outline your reasoning process before presenting the final solution.
+  - "Begin by breaking down the problem into a series of smaller, logical steps."

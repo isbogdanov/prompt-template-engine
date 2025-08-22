@@ -1,4 +1,4 @@
-# Copyright 2024 Igor Bogdanov
+# Copyright 2025 Igor Bogdanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,14 @@
 # file to your project's definitions folder, and fill in the content.
 
 # 1. Declare the agent type. The engine uses this to apply the correct logic.
-agent_type: react
+agent_type: "react"
 
 # 2. Define the core persona of your agent.
-system_message: "You are a helpful assistant."
+system_message: "You are a helpful AI assistant."
+
+include_tool_raise_a_question: true
+include_tool_critique_the_answer: true
+include_tool_improve_based_on_critique: true
 
 # 3. List the critical, high-level rules the agent must follow.
 rules:

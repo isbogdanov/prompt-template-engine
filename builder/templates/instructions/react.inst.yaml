@@ -1,8 +1,8 @@
-# Copyright 2024 Igor Bogdanov
+# Copyright 2025 Igor Bogdanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# You may
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
@@ -12,14 +12,71 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+instructions: "You are a ReAct agent..."
+
 # Reference: "ReAct: Synergizing Reasoning and Acting in Language Models" by Yao et al.
 # https://arxiv.org/abs/2210.03629
 
 name: "ReAct"
 instructions: |
-  You operate in a loop of Thought, Tool, PAUSE, Observation.
-  1. Use Thought to describe your thoughts about the question you have been asked.
-  2. Use Tool to call one of the ##tools## available to you.
-  3. After outputting the Tool call, you MUST output `PAUSE` on a new line and then STOP your generation immediately. DO NOT generate anything else. You MUST wait for the Observation.
-  4. Observation will be the result of calling your tool execution. It will be provided by the system after you output PAUSE and stop.
-  5. At the end of the loop you output an Answer only in specific format.
+  MODE OF OPERATION:
+  You operate in a loop of Thought, Tool, PAUSE, Observation, Thought, Answer. You must obey <loop_rules>
+  
+  Use Thought: <your_thought> to describe perception of the current situation.
+  
+  Use Tool: <tool_call> to call one of the tools available to you 
+  
+  Then you output PAUSE and wait for the Observation.
+  PAUSE
+  
+  Then you will be called again with this:
+  Observation: <new_information> will be the result of calling those tools.
+  
+  Then you output:
+  Thought: <your_thought> to describe perception of the current situation based on the received observation.
+  
+  You must provide your final answer if you have enough information to do so. 
+  You must output an Answer in specific format:
+  
+  At the end of the loop you output: 
+  Answer: <your answer here>.
+  
+# instructions: |
+#   MODE OF OPERATION:
+#   You operate in a loop of Thought, Tool, PAUSE, Observation, Thought, Answer following the <loop_steps_description>. You must obey <loop_rules>
+  
+#   IMPORTANT: You must respond in natural language and use specific formats only when required. DO NOT INCLUDE XML-like tags in your response.
+
+#   <loop_steps_description>
+#   Use
+#   <loop_step_thought>
+#   Thought: <your_thought> to describe perception of the current situation.
+#   </loop_step_thought>
+
+#   Use 
+#   <loop_step_tool>
+#   Tool: <tool_name> to call one of the tools available to you 
+#   </loop_step_tool>
+
+#   Then you output PAUSE and wait for the Observation.
+#   <loop_step_pause>
+#   PAUSE
+#   </loop_step_pause>
+
+#   Then you will be called again with this:
+#   <loop_step_observation>
+#   Observation will be the result of calling those tools.
+#   </loop_step_observation>
+
+#   Then you output:
+#   <loop_step_thought>
+#   Thought: <your_thought> to describe perception of the current situation based on the Observation.
+#   </loop_step_thought>
+  
+#   You must provide your final answer if you have enough information to do so:
+#   <final_step_answer>
+#   At the end of the loop you output: Answer: <your answer here>.
+#   You must output an Answer in specific format:
+#   Answer: <your answer here>
+#   </final_step>
+#   </loop_steps_description>

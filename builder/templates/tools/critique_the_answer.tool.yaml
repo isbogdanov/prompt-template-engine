@@ -1,0 +1,53 @@
+# Copyright 2025 Igor Bogdanov
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law_ or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: "critique_the_answer"
+  description: "Provide a critical assessment of your own proposed thought or final answer. Identify potential flaws, missed assumptions, or alternative interpretations. This tool MUST only be called immediately after 'raise_a_question'."
+
+  example_calling: "critique_the_answer: My current plan is to proceed with Action A, but have I considered the potential unintended consequences?"
+
+  examples:
+    - name: "Refining a Plan with Self-Critique"
+      description: "An example of using `raise_a_question` followed by `critique_the_answer` to identify flaws in an initial plan."
+      steps:
+        - type: "custom"
+          content: "Situation: I am presented with a complex situation with multiple interacting factors."
+        - type: "thought"
+          content: "The situation seems to point towards a primary cause. My initial plan is to address that cause directly."
+        - type: "tool_call"
+          name: "raise_a_question"
+          input: "Is addressing this primary cause the best first step, or could there be an underlying factor I'm missing?"
+        - type: "observation"
+          content: "You have chosen to ask yourself: Is addressing this primary cause the best first step, or could there be an underlying factor I'm missing? What can you answer yourself?"
+        - type: "thought"
+          content: "That's a good question. Let me critique my own plan before acting."
+        - type: "tool_call"
+          name: "critique_the_answer"
+          input: "Critique: Focusing only on the primary cause is a narrow approach. It doesn't account for other contributing factors and might lead to a recurring problem. I should analyze the situation more broadly first."
+        - type: "observation"
+          content: "You have provided a critique. What is your next thought?"
+        - type: "thought"
+          content: "The critique is valid. I need a better, more comprehensive plan. I will first analyze all contributing factors before deciding on a course of action. This is a more robust approach."
+        - type: "answer"
+          content: "My plan is to first conduct a comprehensive analysis of all factors involved before taking any corrective action."
+
+    - name: "Confident Execution without Critique"
+      description: "An example of proceeding with a plan confidently when no self-critique is necessary."
+      steps:
+        - type: "custom"
+          content: "Situation: The problem I'm facing has a clear and unambiguous cause."
+        - type: "thought"
+          content: "The problem is straightforward and the solution is obvious. I am confident in my diagnosis and the required action."
+        - type: "answer"
+          content: "I will proceed with the clear and direct solution."

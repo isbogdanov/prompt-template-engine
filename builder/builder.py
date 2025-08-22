@@ -1,4 +1,4 @@
-# Copyright 2024 Igor Bogdanov
+# Copyright 2025 Igor Bogdanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,50 +44,135 @@ class PromptBuilder:
     def _build_react_prompt(self, **runtime_kwargs) -> str:
         parts = []
 
-        # 1. Preamble (Role + Instructions)
+        # 1. Preamble (Role + Instructions + Answer Format)
         preamble_parts = []
         preamble_parts.append(self.agent_template.get("system_message", ""))
-        preamble_parts.append(self.instruction_template.get("instructions", ""))
+        mode_of_operation = self.instruction_template.get("instructions", "")
+        mode_of_operation += "\nIMPORTANT: The XML-like tags in this prompt are for context and structure. DO NOT include them in your response."
+        preamble_parts.append(mode_of_operation)
+        answer_format = self.agent_template.get("answer_format")
+        if answer_format:
+            preamble_parts.append(
+                f"YOU MUST PROVIDE FINAL ANSWER IN SPECIFIC FORMAT SHOWN BELOW:\n{answer_format}"
+            )
         parts.append("\n\n".join(preamble_parts))
 
         # 2. History (if provided)
         if "history" in runtime_kwargs:
             parts.append(runtime_kwargs["history"])
 
+        # 4. Tools
+        tools = self.agent_template.get("tools", [])
+
+        # Conditionally add tools based on 'include_tool_*' flags
+        for key, value in list(self.agent_template.items()):
+            if key.startswith("include_tool_") and value:
+                tool_name = key.replace("include_tool_", "")
+                tool_path = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "templates",
+                    "tools",
+                    f"{tool_name}.tool.yaml",
+                )
+                try:
+                    included_tool = load_template(tool_path)
+                    tools.extend(included_tool)
+                    # Check if the included tool has its own examples and merge them
+                    if "examples" in included_tool[0]:
+                        self.agent_template.setdefault("examples", []).extend(
+                            included_tool[0]["examples"]
+                        )
+                except TemplateNotFoundError:
+                    # You might want to log this as a warning or handle it as needed
+                    print(
+                        f"Warning: Tool definition not found for '{tool_name}' at {tool_path}"
+                    )
+
+        if tools:
+            tool_strings = []
+            for tool in tools:
+                tool_str = f"<tool>\n{tool['name']}\ne.g. {tool['example_calling']}\n\n{tool['description']}"
+
+                if tool.get("is_critical"):
+                    answer_format = self.agent_template.get("answer_format", "")
+                    tool_str += f"\n\n<loop_rules>This tool is critical. If you decide to call it, you must provide Answer immediately after calling this tool. After you receive the Observation from this tool, your ONLY next step is to output the final Answer.</loop_rules>"
+                tool_strings.append(tool_str)
+                tool_strings.append("</tool>\n")
+
+            reflection_knowledge = self.agent_template.get("reflection_knowledge")
+            intro_sentence = "Your available tools are in <tools_list>"
+            if reflection_knowledge:
+                intro_sentence += (
+                    " and your guiding principles are in <reflection_knowledge>"
+                )
+
+            tools_section = (
+                f"{intro_sentence}\n <tool_list>"
+                + "\n".join(tool_strings)
+                + "\nNo other actions are available to you."
+            )
+            parts.append(tools_section)
+            parts.append("</tools_list>")
+
+        # 2. Reflection Knowledge (if provided)
+        reflection_knowledge = self.agent_template.get("reflection_knowledge")
+        if reflection_knowledge:
+            reflection_knowledge_str = ""
+            if isinstance(reflection_knowledge, list):
+                reflection_knowledge_str = "\n".join(
+                    f"- {item}" for item in reflection_knowledge
+                )
+            else:
+                reflection_knowledge_str = str(reflection_knowledge)
+
+            enforcement_statement = (
+                "CRITICAL: When using any tool, you MUST ground your reasoning in the following reflection knowledge. "
+                "Your thought process must explicitly reference these principles."
+            )
+            reflection_section = f"\n\n<reflection_knowledge>\n{enforcement_statement}\n{reflection_knowledge_str.strip()}\n</reflection_knowledge>"
+            parts.append(reflection_section)
+
         # 3. Rules
         rules = self.agent_template.get("rules", [])
         if rules:
             parts.append("CRITICAL RULES:\n" + "\n".join(f"- {rule}" for rule in rules))
 
-        # 4. Tools
-        tools = self.agent_template.get("tools", [])
-        if tools:
-            tool_strings = []
-            for tool in tools:
-                tool_str = f"Tool Name: {tool['name']}\nDescription: {tool['description']}\nExample: {tool['example_calling']}"
-                tool_strings.append(tool_str)
-            parts.append("TOOLS:\n" + "\n\n".join(tool_strings))
-
         # 5. Examples
         examples = self.agent_template.get("examples", [])
         if examples:
             example_strings = []
-            for example in examples:
-                step_strings = [f"--- Example: {example.get('name', '')} ---"]
+            for i, example in enumerate(examples, 1):
+                step_strings = [
+                    f"--- Example {i}: {example.get('name', '')} ---",
+                    f"Example Session: {example.get('description', '')}\n",
+                ]
                 steps = example.get("steps", [])
                 for i, step in enumerate(steps):
                     if step["type"] == "thought":
                         step_strings.append(f"Thought: {step['content']}")
                     elif step["type"] == "tool_call":
-                        step_strings.append(f"Tool: {step['name']}: {step['input']}")
+                        tool_input = step.get("input")
+                        if tool_input:
+                            step_strings.append(f"Tool: {step['name']}: {tool_input}")
+                        else:
+                            step_strings.append(f"Tool: {step['name']}")
+                        step_strings.append("PAUSE")
+                        # Add the "You will be called again" part for all but the last step
+                        if i < len(steps) - 1:
+                            step_strings.append("\nYou will be called again with this:")
                     elif step["type"] == "observation":
                         step_strings.append(f"Observation: {step['content']}")
                     elif step["type"] == "answer":
+                        # The thought preceding the answer is the last thought in the sequence
+                        if step_strings and "Thought:" in step_strings[-1]:
+                            # No need to add another thought if the last step was one
+                            pass
+                        step_strings.append("You then output:")
                         step_strings.append(f"Answer: {step['content']}")
                     elif step["type"] == "custom":
                         step_strings.append(step["content"])
                 example_strings.append("\n".join(step_strings))
-            parts.append("EXAMPLES:\n" + "\n\n".join(example_strings))
+            parts.append("\n\n" + "\n\n".join(example_strings))
 
         return "\n\n".join(parts).strip()
 

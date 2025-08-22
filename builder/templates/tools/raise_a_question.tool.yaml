@@ -1,0 +1,47 @@
+# Copyright 2025 Igor Bogdanov
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: "raise_a_question"
+  description: |
+    This tool allows you to ask yourself an additional question. You have a limited number of questions you can ask. 
+    
+    CRITICAL TOOL USE INSTRUCTION: YOU MUST USE THIS TOOL TO VALIDATE YOUR DECISIONS"
+  example_calling: "raise_a_question: What would be the appropriate strategy?"
+  examples:
+    - name: "Self-Reflection Before Answering"
+      description: "An example of using self-reflection to formulate a considered response."
+      steps:
+        - type: "custom"
+          content: "Here's how the situation is developing:\n<details of the situation>"
+        - type: "thought"
+          content: "The situation is the following: <details of the situation>. I need another thinking step to formulate my response."
+        - type: "tool_call"
+          name: "raise_a_question"
+          input: "What would be the appropriate strategy?"
+        - type: "observation"
+          content: "You have chosen ask yourself: What would be the appropriate strategy? What can you answer to yourself?"
+        - type: "thought"
+          content: "After deep analysis I think I know what I need to do and I must provide an answer."
+        - type: "answer"
+          content: "This is my well-considered answer."
+
+    - name: "Direct Answer Without Reflection"
+      description: "An example of providing a direct answer when confident."
+      steps:
+        - type: "custom"
+          content: "Here's how the situation is developing: <details of the situation>"
+        - type: "thought"
+          content: "Looks like I immediately know what to say and do."
+        - type: "answer"
+          content: "This is my answer to the question."

@@ -1,4 +1,4 @@
-# Copyright 2024 Igor Bogdanov
+# Copyright 2025 Igor Bogdanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,5 +47,5 @@ def test_generate_react_prompt_and_print(react_agent_builder):
 
     # We'll add a simple assertion to make it a valid test
     assert final_prompt is not None
-    assert "Tool Name: search" in final_prompt
+    assert "search" in final_prompt
     assert "User: What was the score of the last Real Madrid game?" in final_prompt

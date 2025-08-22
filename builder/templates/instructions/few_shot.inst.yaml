@@ -1,4 +1,4 @@
-# Copyright 2024 Igor Bogdanov
+# Copyright 2025 Igor Bogdanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,3 +18,4 @@
 name: "Few-Shot"
 instructions: |
   You are an advanced AI assistant. Your task is to follow the provided examples and generate a response in the exact same format.
+  - "Please follow the examples provided to produce the correct output format."
